@@ -2,32 +2,46 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="fragments/resources :: headResources('Pizza List')"></head>
 <body data-bs-theme="dark">
+<nav th:replace="fragments/navbar :: topNavbar('pizzas')"></nav>
 <div class="container">
     <h1>Pizza List</h1>
+
+    <form th:action="@{/pizzas}" method="GET">
+        <div class="input-group">
+            <input
+                    type="text"
+                    placeholder="Search pizza"
+                    class="form-control" name="search"
+                    th:value="${param.search}"
+            >
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
 
     <table th:if="${pizzaList.size() > 0}" class="table">
         <thead>
         <tr>
             <th>Id</th>
             <th>Name</th>
-            <th>Description</th>
             <th>Image</th>
+            <th>Description</th>
             <th>Price</th>
+            <th>Options</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="pizza : ${pizzaList}" th:object="${pizza}">
             <td th:text="*{id}" class="fs-4"></td>
-            <td><img th:src="*{image_url}" style="width:100px; height:100px"></td>
             <td th:text="*{name}" class="fs-6"></td>
+            <td><img th:src="*{image_url}" style="width:100px; height:100px"></td>
             <td th:text="*{description}" class="fs-6"></td>
             <td th:text="|*{price}€|" class="fs-4"></td>
+            <td class="text-center"><a th:href="@{/pizzas/show/{id}(id=*{id})}" title="details"><i class="fa-solid fa-pizza-slice"></i></a></td>
         </tr>
         </tbody>
     </table>
 
     <div th:unless="${pizzaList.size() > 0}">There are no pizzas available</div>
-
 </div>
 </body>
 </html>
