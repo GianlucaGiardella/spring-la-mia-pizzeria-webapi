@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="formField(type, name, label)">
+    <label th:for="${name}" class="form-label" th:text="${label}"></label>
+    <input th:type="${type}" class="form-control" th:id="${name}" th:field="*{__${name}__}" step="any"
+           th:errorClass="is-invalid">
+    <div th:if="${#fields.hasErrors(name)}" class="invalid-feedback">
+        <div th:each="err : ${#fields.errors(name)}" th:text="${err}"></div>
+    </div>
+</th:block>
+</body>
+</html>

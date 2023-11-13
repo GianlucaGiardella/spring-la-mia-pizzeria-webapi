@@ -1,6 +1,8 @@
 package com.experis.course.springlamiapizzeriacrud.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,10 +13,24 @@ public class Pizza {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Size(max = 50, message = "Max 50 characters")
+    @Size(min = 3, message = "Min 3 characters")
     private String name;
+
+    @Size(min = 3, message = "Min 3 characters")
+    @Lob
     private String description;
+
+    @Size(max = 255, message = "Max 255 characters")
+    @Size(min = 5, message = "Min 5 characters")
     private String image_url;
+
+    @NotNull(message = "Insert a number")
+    @Min(value = 1, message = "Min 1€")
     private BigDecimal price;
+
+    @CreationTimestamp
     private LocalDateTime created_at;
 
     public Integer getId() {
