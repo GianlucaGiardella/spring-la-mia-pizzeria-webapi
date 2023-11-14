@@ -36,6 +36,7 @@
                         <th>Price</th>
                         <th>Show</th>
                         <th>Edit</th>
+                        <th>Delete</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -45,7 +46,7 @@
                         <td><img th:src="*{image_url}" style="width:100px; height:100px"></td>
                         <td th:text="*{description}" class="fs-6"></td>
                         <td th:text="|*{price}€|" class="fs-4"></td>
-                        <td class="text-center">
+                        <td>
                             <a class="btn btn-primary" th:href="@{/pizzas/show/{id}(id=*{id})}" title="details"><i
                                     class="fa-solid fa-pizza-slice"></i></a>
                         </td>
