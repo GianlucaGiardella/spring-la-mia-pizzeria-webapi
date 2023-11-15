@@ -21,7 +21,7 @@ import java.util.Optional;
 public class PizzaController {
 
     @Autowired
-    PizzaRepository pizzaRepository;
+    private PizzaRepository pizzaRepository;
 
     @GetMapping
     public String index(@RequestParam Optional<String> search, Model model) {
@@ -84,7 +84,6 @@ public class PizzaController {
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id,  Model model) {
 
-        /*Optional<Pizza> result = pizzaRepository.findById(id);*/
         Optional<Pizza> result = pizzaRepository.findById(id);
 
         if(result.isPresent()) {
