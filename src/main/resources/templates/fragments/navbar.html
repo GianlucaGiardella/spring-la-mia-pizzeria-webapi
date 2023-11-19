@@ -12,12 +12,20 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" th:classAppend="${area == 'pizzas' ? 'active' : ''}"
+                    <a class="nav-link" th:classAppend="${area == 'pizza list' ? 'active' : ''}"
                        th:href="@{/pizzas}">Pizzas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:classAppend="${area == 'create' ? 'active' : ''}"
+                    <a class="nav-link" th:classAppend="${area == 'create pizza' ? 'active' : ''}"
                        th:href="@{/pizzas/create}">Add Pizza</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classAppend="${area == 'ingredient list' ? 'active' : ''}"
+                       th:href="@{/ingredients}">Ingredients</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classAppend="${area == 'create ingredient' ? 'active' : ''}"
+                       th:href="@{/ingredients/create}">Add Ingredient</a>
                 </li>
             </ul>
         </div>

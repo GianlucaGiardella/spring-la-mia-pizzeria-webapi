@@ -1,6 +1,7 @@
 package com.experis.course.springlamiapizzeriacrud.controller;
 
 import com.experis.course.springlamiapizzeriacrud.model.Pizza;
+import com.experis.course.springlamiapizzeriacrud.repository.IngredientRepository;
 import com.experis.course.springlamiapizzeriacrud.repository.PizzaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,14 @@ public class PizzaController {
     @Autowired
     private PizzaRepository pizzaRepository;
 
+    @Autowired
+    private IngredientRepository ingredientRepository;
+
     @GetMapping
-    public String index(@RequestParam Optional<String> search, Model model) {
+    public String index(
+            @RequestParam Optional<String> search,
+            Model model
+    ) {
 
         List<Pizza> pizzaList;
 
@@ -40,7 +47,10 @@ public class PizzaController {
     }
 
     @GetMapping("/show/{id}")
-    public String show(@PathVariable Integer id, Model model) {
+    public String show(
+            @PathVariable Integer id,
+            Model model
+    ) {
 
         Optional<Pizza> result = pizzaRepository.findById(id);
 
@@ -57,11 +67,16 @@ public class PizzaController {
     public String create(Model model) {
         model.addAttribute("pizza", new Pizza());
 
+        model.addAttribute("ingredientList", ingredientRepository.findByOrderByName());
+
         return "pizzas/form";
     }
 
     @PostMapping("/create")
-    public String store(@Valid @ModelAttribute("pizza") Pizza formPizza, BindingResult bindingResult) {
+    public String store(
+            @Valid @ModelAttribute("pizza") Pizza formPizza,
+            BindingResult bindingResult
+    ) {
 
         if (bindingResult.hasErrors()) {
             return "pizzas/form";
@@ -71,8 +86,11 @@ public class PizzaController {
         try {
             newPizza = pizzaRepository.save(formPizza);
         } catch (RuntimeException e) {
-            bindingResult.addError(new FieldError("book", "isbn", formPizza.getPrice(), false, null, null,
+            bindingResult.addError(new FieldError("pizza", "price", formPizza.getPrice(), false, null, null,
                     "Price must be greaten than 0"));
+
+            bindingResult.addError(new FieldError("pizza", "name", formPizza.getName(), false, null, null,
+                    "Insert a name"));
 
             return "pizzas/form";
         }
@@ -82,12 +100,18 @@ public class PizzaController {
 
 
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable Integer id,  Model model) {
+    public String edit(
+            @PathVariable Integer id,
+            Model model
+    ) {
 
         Optional<Pizza> result = pizzaRepository.findById(id);
 
-        if(result.isPresent()) {
+        if (result.isPresent()) {
             model.addAttribute("pizza", result.get());
+
+            model.addAttribute("ingredientList", ingredientRepository.findByOrderByName());
+
             return "/pizzas/form";
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pizza with id " + id + " not found");
@@ -95,9 +119,16 @@ public class PizzaController {
     }
 
     @PostMapping("/edit/{id}")
-    public String update(@PathVariable Integer id, @Valid @ModelAttribute("pizza") Pizza formPizza, BindingResult bindingResult){
+    public String update(
+            @PathVariable Integer id,
+            @Valid @ModelAttribute("pizza") Pizza formPizza,
+            BindingResult bindingResult,
+            Model model
+    ) {
 
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("ingredientList", ingredientRepository.findByOrderByName());
+
             return "/pizzas/form";
         }
 
@@ -105,6 +136,7 @@ public class PizzaController {
         editPizza.setName(formPizza.getName());
         editPizza.setImage_url(formPizza.getImage_url());
         editPizza.setDescription(formPizza.getDescription());
+        editPizza.setIngredients(formPizza.getIngredients());
         editPizza.setPrice(formPizza.getPrice());
 
         Pizza editedPizza = pizzaRepository.save(editPizza);
@@ -113,8 +145,11 @@ public class PizzaController {
     }
 
 
-        @PostMapping("/delete/{id}")
-        public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    @PostMapping("/delete/{id}")
+    public String delete(
+            @PathVariable Integer id,
+            RedirectAttributes redirectAttributes
+    ) {
 
         Pizza deletePizza = pizzaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 

@@ -2,10 +2,13 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="fragments/resources :: headResources('Pizza List')"></head>
 <body data-bs-theme="dark">
-<nav th:replace="fragments/navbar :: topNavbar('pizzas')"></nav>
+<nav th:replace="fragments/navbar :: topNavbar('pizza list')"></nav>
+
 
 <div class="card m-5">
     <div class="card-body">
+
+        <div th:replace="fragments/components :: message"></div>
 
         <div class="container">
             <div class="row g-3">
@@ -55,7 +58,7 @@
                                     class="fa-solid fa-pen-to-square"></i></a>
                         </td>
                         <td>
-                            <form method="post" th:action="@{/pizzas/delete/{id}(id=*{id})}"
+                            <form method="post" th:action="@{/pizzas/delete/{id}(id = *{id})}"
                                   onsubmit="return confirm('Are you sure ?')">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa-solid fa-trash-can"></i>

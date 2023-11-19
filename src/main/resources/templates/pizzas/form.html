@@ -1,8 +1,8 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="isEdit=${pizza.id != null}">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="isEdit = ${pizza.id != null}">
 <head th:insert="fragments/resources :: headResources(${isEdit ? 'Edit Pizza' : 'Create Pizza'})"></head>
 <body data-bs-theme="dark">
-<nav th:replace="fragments/navbar :: topNavbar('create')"></nav>
+<nav th:replace="fragments/navbar :: topNavbar('create pizza')"></nav>
 
 <div class="card m-5">
     <div class="card-body">
@@ -30,6 +30,20 @@
 
                 <div class="col-12"
                      th:insert="fragments/components :: formField('text', 'description', 'Description')"></div>
+
+                <div class="col-12">
+                    <h3>Ingredients</h3>
+                    <div class="form-check" th:each="cat : ${ingredientList}">
+                        <input
+                                class="form-check-input"
+                                type="checkbox"
+                                th:value="${cat.id}"
+                                th:id="|cat_${cat.id}|"
+                                th:field="*{ingredients}">
+                        <label class="form-check-label" th:for="|cat_${cat.id}|" th:text="${cat.name}">
+                        </label>
+                    </div>
+                </div>
 
                 <div class="col-12">
                     <button class="btn btn-primary" type="submit">Save</button>

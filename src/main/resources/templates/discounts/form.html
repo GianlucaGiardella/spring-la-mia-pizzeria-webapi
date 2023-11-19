@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="isEdit=${discount.id != null}">
 <head th:insert="fragments/resources :: headResources(${isEdit ? 'Edit Discount' : 'Create Discount'})"></head>
 <body data-bs-theme="dark">
-<nav th:replace="fragments/navbar :: topNavbar('pizzas')"></nav>
+<nav th:replace="fragments/navbar :: topNavbar('pizza list')"></nav>
 
 <div class="card m-5">
     <div class="card-body">
@@ -13,10 +13,10 @@
 
             <form
                     th:with="actionUrl = ${isEdit ? '/discounts/edit/' + discount.id : '/discounts/create'}"
-                    class="row g-3"
-                    method="post"
                     th:action="@{${actionUrl}}"
                     th:object="${discount}"
+                    method="post"
+                    class="row g-3"
             >
                 <input type="hidden" th:field="*{pizza}">
 

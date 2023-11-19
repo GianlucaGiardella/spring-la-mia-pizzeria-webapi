@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/resources :: headResources('Ingredients')"></head>
+<body data-bs-theme="dark">
+<nav th:replace="fragments/navbar :: topNavbar('ingredient list')"></nav>
+
+<div class="card m-5">
+    <div class="card-body">
+
+        <div th:replace="fragments/components :: message"></div>
+
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <h1 class="m-0">Ingredients</h1>
+                <a th:href="@{/ingredients/create}" class="btn btn-primary ms-auto"><i class="fa-solid fa-plus"></i></a>
+            </div>
+
+            <table th:if="${ingredientList.size() > 0}" class="table">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ingredient : ${ingredientList}" th:object="${ingredient}">
+                    <td th:text="*{id}" class="fs-4"></td>
+                    <td th:text="*{name}" class="fs-6"></td>
+                    <td>
+                        <a class="btn btn-primary" th:href="@{/ingredients/edit/{id}(id=*{id})}" title="edit"><i
+                                class="fa-solid fa-pen-to-square"></i></a>
+                    </td>
+                    <td>
+                        <form method="post" th:action="@{/ingredients/delete/{id}(id = *{id})}"
+                              onsubmit="return confirm('Are you sure ?')">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div th:unless="${ingredientList.size() > 0}">There are no ingredients available</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
