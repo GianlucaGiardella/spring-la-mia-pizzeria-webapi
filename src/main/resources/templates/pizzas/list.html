@@ -1,5 +1,9 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org"
+>
 <head th:insert="fragments/resources :: headResources('Pizza List')"></head>
 <body data-bs-theme="dark">
 <nav th:replace="fragments/navbar :: topNavbar('pizza list')"></nav>
@@ -14,7 +18,11 @@
             <div class="row g-3">
                 <div class="d-flex align-items-center">
                     <h1 class="m-0">Pizza List</h1>
-                    <a th:href="@{/pizzas/create}" class="btn btn-primary ms-auto"><i class="fa-solid fa-plus"></i></a>
+                    <a
+                            th:href="@{/pizzas/create}"
+                            sec:authorize="hasAuthority('ADMIN')"
+                            class="btn btn-primary ms-auto"
+                    ><i class="fa-solid fa-plus"></i></a>
                 </div>
 
                 <form th:action="@{/pizzas}" method="GET">
@@ -37,9 +45,7 @@
                         <th>Image</th>
                         <th>Description</th>
                         <th>Price</th>
-                        <th>Show</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -50,20 +56,29 @@
                         <td th:text="*{description}" class="fs-6"></td>
                         <td th:text="|*{price}€|" class="fs-4"></td>
                         <td>
-                            <a class="btn btn-primary" th:href="@{/pizzas/show/{id}(id=*{id})}" title="details"><i
-                                    class="fa-solid fa-pizza-slice"></i></a>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" th:href="@{/pizzas/edit/{id}(id=*{id})}" title="edit"><i
-                                    class="fa-solid fa-pen-to-square"></i></a>
-                        </td>
-                        <td>
-                            <form method="post" th:action="@{/pizzas/delete/{id}(id = *{id})}"
-                                  onsubmit="return confirm('Are you sure ?')">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
+                            <div class="d-flex align-items-center gap-2">
+                                <a class="btn btn-primary" th:href="@{/pizzas/show/{id}(id=*{id})}" title="details"><i
+                                        class="fa-solid fa-pizza-slice"></i></a>
+
+                                <a
+                                        class="btn btn-primary"
+                                        th:href="@{/pizzas/edit/{id}(id=*{id})}"
+                                        sec:authorize="hasAuthority('ADMIN')"
+                                        title="edit"
+                                ><i
+                                        class="fa-solid fa-pen-to-square"></i></a>
+
+                                <form
+                                        method="post"
+                                        th:action="@{/pizzas/delete/{id}(id = *{id})}"
+                                        sec:authorize="hasAuthority('ADMIN')"
+                                        onsubmit="return confirm('Are you sure ?')"
+                                >
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     </tbody>

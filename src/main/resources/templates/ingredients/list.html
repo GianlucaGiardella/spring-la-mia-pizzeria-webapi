@@ -20,8 +20,7 @@
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -29,16 +28,17 @@
                     <td th:text="*{id}" class="fs-4"></td>
                     <td th:text="*{name}" class="fs-6"></td>
                     <td>
-                        <a class="btn btn-primary" th:href="@{/ingredients/edit/{id}(id=*{id})}" title="edit"><i
-                                class="fa-solid fa-pen-to-square"></i></a>
-                    </td>
-                    <td>
-                        <form method="post" th:action="@{/ingredients/delete/{id}(id = *{id})}"
-                              onsubmit="return confirm('Are you sure ?')">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </form>
+                        <div class="d-flex align-items-center gap-2">
+                            <a class="btn btn-primary" th:href="@{/ingredients/edit/{id}(id=*{id})}" title="edit"><i
+                                    class="fa-solid fa-pen-to-square"></i></a>
+
+                            <form method="post" th:action="@{/ingredients/delete/{id}(id = *{id})}"
+                                  onsubmit="return confirm('Are you sure ?')">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 </tbody>

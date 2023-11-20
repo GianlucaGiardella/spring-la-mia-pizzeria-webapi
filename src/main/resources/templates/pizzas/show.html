@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org"
+>
 <head th:insert="fragments/resources :: headResources('Pizza Show')"></head>
 <body data-bs-theme="dark">
 
@@ -26,42 +30,44 @@
                 <div th:unless="*{ingredients.size() > 0}">No Ingredients available</div>
             </section>
 
-            <section>
+            <section sec:authorize="hasAuthority('ADMIN')">
                 <h3>Discounts</h3>
                 <a th:href="@{/discounts/create(pizzaId = *{id})}"
                 ><i class="fa-solid fa-circle-plus"></i></a>
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="discount : *{discounts}" th:object="${discount}">
+                        <td th:text="*{title}"></td>
+                        <td th:text="*{startDate}"></td>
+                        <td th:text="*{endDate}"></td>
+                        <td>
+                            <a
+                                    class="btn btn-primary"
+                                    th:href="@{/discounts/edit/{id}(id=*{id})}"
+                                    title="edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div th:if="*{discounts.size() == null}" class="alert alert-info">No discounts available for this pizza
+
             </section>
 
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="discount : *{discounts}" th:object="${discount}">
-                    <td th:text="*{title}"></td>
-                    <td th:text="*{startDate}"></td>
-                    <td th:text="*{endDate}"></td>
-                    <td>
-                        <a
-                                class="btn btn-primary"
-                                th:href="@{/discounts/edit/{id}(id=*{id})}"
-                                title="edit">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div th:if="*{discounts.size() == null}" class="alert alert-info">No discounts available for this pizza
-            </div>
         </div>
-
     </div>
+
+</div>
 </div>
 </body>
 </html>
