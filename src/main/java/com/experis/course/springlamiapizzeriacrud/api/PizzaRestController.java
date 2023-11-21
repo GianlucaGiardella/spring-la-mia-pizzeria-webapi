@@ -4,6 +4,10 @@ import com.experis.course.springlamiapizzeriacrud.model.Pizza;
 import com.experis.course.springlamiapizzeriacrud.repository.PizzaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -66,5 +70,18 @@ public class PizzaRestController {
         pizzaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         pizzaRepository.deleteById(id);
+    }
+
+    @GetMapping("/page")
+    public Page<Pizza> pagedIndex(
+            @RequestParam(name = "size", defaultValue = "4") Integer size,
+            @RequestParam(name = "page", defaultValue = "0") Integer page) {
+
+        return pizzaRepository.findAll(PageRequest.of(page, size));
+    }
+
+    @GetMapping("/page/v2")
+    public Page<Pizza> pagedIndexV2(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+        return pizzaRepository.findAll(pageable);
     }
 }
