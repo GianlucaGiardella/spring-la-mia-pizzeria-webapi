@@ -26,10 +26,6 @@ public class DatabaseUserDatails implements UserDetails {
         }
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.authorities;
@@ -63,5 +59,9 @@ public class DatabaseUserDatails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }
