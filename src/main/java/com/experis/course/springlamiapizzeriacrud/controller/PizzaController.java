@@ -1,5 +1,6 @@
 package com.experis.course.springlamiapizzeriacrud.controller;
 
+import com.experis.course.springlamiapizzeriacrud.dto.PizzaDto;
 import com.experis.course.springlamiapizzeriacrud.model.Pizza;
 import com.experis.course.springlamiapizzeriacrud.repository.IngredientRepository;
 import com.experis.course.springlamiapizzeriacrud.repository.PizzaRepository;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,20 +54,18 @@ public class PizzaController {
             Model model
     ) {
 
-        Optional<Pizza> result = pizzaRepository.findById(id);
+        Pizza result = pizzaRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if (result.isPresent()) {
-            model.addAttribute("pizza", result.get());
+        model.addAttribute("pizza", result);
 
-            return "pizzas/show";
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pizza with id " + id + " not found!");
-        }
+        return "pizzas/show";
     }
 
     @GetMapping("/create")
     public String create(Model model) {
-        model.addAttribute("pizza", new Pizza());
+        model.addAttribute("pizza", new PizzaDto());
 
         model.addAttribute("ingredientList", ingredientRepository.findByOrderByName());
 
@@ -74,54 +74,96 @@ public class PizzaController {
 
     @PostMapping("/create")
     public String store(
-            @Valid @ModelAttribute("pizza") Pizza formPizza,
-            BindingResult bindingResult
+            @Valid @ModelAttribute("pizza") PizzaDto formPizza,
+            BindingResult bindingResult,
+            Model model
     ) {
-
         if (bindingResult.hasErrors()) {
+            model.addAttribute("ingredientList", ingredientRepository.findByOrderByName());
             return "pizzas/form";
         }
 
-        Pizza newPizza = null;
+        Pizza storePizza = null;
+
         try {
-            newPizza = pizzaRepository.save(formPizza);
-        } catch (RuntimeException e) {
-            bindingResult.addError(new FieldError("pizza", "price", formPizza.getPrice(), false, null, null,
-                    "Price must be greaten than 0"));
+            Pizza newPizza = new Pizza();
+            newPizza.setId(formPizza.getId());
+            newPizza.setName(formPizza.getName());
+            newPizza.setPrice(formPizza.getPrice());
+            newPizza.setDescription(formPizza.getDescription());
+            newPizza.setIngredients(formPizza.getIngredients());
 
-            bindingResult.addError(new FieldError("pizza", "name", formPizza.getName(), false, null, null,
-                    "Insert a name"));
+            if (formPizza.getImageFile() != null && !formPizza.getImageFile().isEmpty()) {
+                byte[] bytes = formPizza.getImageFile().getBytes();
+                newPizza.setImage(bytes);
+            }
+
+            storePizza = pizzaRepository.save(newPizza);
+
+        } catch (RuntimeException e) {
+            bindingResult.addError(new FieldError(
+                    "pizza",
+                    "price",
+                    formPizza.getPrice(),
+                    false,
+                    null,
+                    null,
+                    "Price must be greaten than 0")
+            );
+
+            bindingResult.addError(new FieldError(
+                    "pizza",
+                    "name",
+                    formPizza.getName(),
+                    false,
+                    null,
+                    null,
+                    "Insert a name")
+            );
 
             return "pizzas/form";
+
+        } catch (IOException e) {
+            bindingResult.addError(new FieldError(
+                    "pizza",
+                    "image",
+                    null,
+                    false,
+                    null,
+                    null,
+                    "Unable to save file")
+            );
         }
 
-        return "redirect:/pizzas/show/" + newPizza.getId();
+        return "redirect:/pizzas/show/" + storePizza.getId();
     }
-
 
     @GetMapping("/edit/{id}")
     public String edit(
             @PathVariable Integer id,
             Model model
     ) {
+        Pizza dbPizza = pizzaRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        Optional<Pizza> result = pizzaRepository.findById(id);
+        PizzaDto pizzaDto = new PizzaDto();
+        pizzaDto.setId(dbPizza.getId());
+        pizzaDto.setName(dbPizza.getName());
+        pizzaDto.setPrice(dbPizza.getPrice());
+        pizzaDto.setDescription(dbPizza.getDescription());
+        pizzaDto.setIngredients(dbPizza.getIngredients());
 
-        if (result.isPresent()) {
-            model.addAttribute("pizza", result.get());
+        model.addAttribute("pizza", pizzaDto);
+        model.addAttribute("ingredientList", ingredientRepository.findByOrderByName());
 
-            model.addAttribute("ingredientList", ingredientRepository.findByOrderByName());
-
-            return "/pizzas/form";
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pizza with id " + id + " not found");
-        }
+        return "/pizzas/form";
     }
 
     @PostMapping("/edit/{id}")
     public String update(
             @PathVariable Integer id,
-            @Valid @ModelAttribute("pizza") Pizza formPizza,
+            @Valid @ModelAttribute("pizza") PizzaDto formPizza,
             BindingResult bindingResult,
             Model model
     ) {
@@ -132,18 +174,42 @@ public class PizzaController {
             return "/pizzas/form";
         }
 
-        Pizza editPizza = pizzaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        editPizza.setName(formPizza.getName());
-        editPizza.setImage_url(formPizza.getImage_url());
-        editPizza.setDescription(formPizza.getDescription());
-        editPizza.setIngredients(formPizza.getIngredients());
-        editPizza.setPrice(formPizza.getPrice());
+        Pizza dbPizza = pizzaRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        Pizza editedPizza = pizzaRepository.save(editPizza);
+        try {
+            dbPizza.setId(formPizza.getId());
+            dbPizza.setName(formPizza.getName());
+            dbPizza.setPrice(formPizza.getPrice());
+            dbPizza.setDescription(formPizza.getDescription());
+            dbPizza.setIngredients(formPizza.getIngredients());
+
+            if (formPizza.getImageFile() != null && !formPizza.getImageFile().isEmpty()) {
+                byte[] bytes = formPizza.getImageFile().getBytes();
+                dbPizza.setImage(bytes);
+            }
+        } catch (IOException e) {
+            bindingResult.addError(new FieldError(
+                    "pizza",
+                    "image",
+                    null,
+                    false,
+                    null,
+                    null,
+                    "Unable to save file")
+            );
+        }
+
+
+       /* if (editPizza.getImage() != null && editPizza.getImage().length > 0) {
+            editPizza.setImage(formPizza);
+        }*/
+
+        Pizza editedPizza = pizzaRepository.save(dbPizza);
 
         return "redirect:/pizzas/show/" + editedPizza.getId();
     }
-
 
     @PostMapping("/delete/{id}")
     public String delete(
@@ -151,7 +217,9 @@ public class PizzaController {
             RedirectAttributes redirectAttributes
     ) {
 
-        Pizza deletePizza = pizzaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Pizza deletePizza = pizzaRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         pizzaRepository.deleteById(id);
 

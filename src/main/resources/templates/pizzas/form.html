@@ -17,19 +17,25 @@
                     method="post"
                     th:action="@{${actionUrl}}"
                     th:object="${pizza}"
+                    enctype="multipart/form-data"
             >
 
                 <div class="col-8"
                      th:insert="fragments/components :: formField('text', 'name', 'Name')"></div>
 
                 <div class="col-4"
-                     th:insert="fragments/components :: formField('number', 'price', 'Price')"></div>
+                     th:insert="fragments/components :: formField('number', 'price', 'Price')">
+                </div>
+
+                <div class="col-12 d-flex align-items-center">
+                    <img th:if="${isEdit}" width="100" th:src="@{/files/image/{pizzaId}(pizzaId = *{id})}" alt="image">
+                    <div th:insert="fragments/components :: formField('file', 'imageFile', 'Image')"></div>
+                </div>
 
                 <div class="col-12"
-                     th:insert="fragments/components :: formField('text', 'image_url', 'Image URL')"></div>
+                     th:insert="fragments/components :: formField('text', 'description', 'Description')">
 
-                <div class="col-12"
-                     th:insert="fragments/components :: formField('text', 'description', 'Description')"></div>
+                </div>
 
                 <div class="col-12">
                     <h3>Ingredients</h3>

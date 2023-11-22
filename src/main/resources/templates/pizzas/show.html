@@ -17,7 +17,7 @@
 
             <section>
                 <h1 th:text="*{name}"></h1>
-                <img th:src="*{image_url}">
+                <img class="img-fluid" th:src="@{/files/image/{pizzaId}(pizzaId = *{id})}" alt="image">
                 <p th:text="*{description}"></p>
                 <h2 th:text="*{price}"></h2>
             </section>
@@ -61,7 +61,7 @@
                     </tbody>
                 </table>
                 <div th:if="*{discounts.size() == null}" class="alert alert-info">No discounts available for this pizza
-
+                </div>
             </section>
 
         </div>

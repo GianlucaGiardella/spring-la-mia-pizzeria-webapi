@@ -1,20 +1,15 @@
-package com.experis.course.springlamiapizzeriacrud.model;
+package com.experis.course.springlamiapizzeriacrud.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import org.hibernate.annotations.CreationTimestamp;
+import com.experis.course.springlamiapizzeriacrud.model.Ingredient;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "pizzas")
-public class Pizza {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PizzaDto {
     private Integer id;
 
     @Size(max = 50, message = "Max 50 characters")
@@ -22,25 +17,14 @@ public class Pizza {
     private String name;
 
     @Size(min = 3, message = "Min 3 characters")
-    @Lob
     private String description;
 
-    @Lob
-    @Column(length = 16000000)
-    @JsonIgnore
-    private byte[] image;
+    private MultipartFile imageFile;
 
     @NotNull(message = "Insert a number")
     @Min(value = 1, message = "Min 1€")
     private BigDecimal price;
 
-    @CreationTimestamp
-    private LocalDateTime created_at;
-
-    @OneToMany(mappedBy = "pizza")
-    private List<Discount> discounts = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
     private List<Ingredient> ingredients;
 
     public Integer getId() {
@@ -67,12 +51,12 @@ public class Pizza {
         this.description = description;
     }
 
-    public byte[] getImage() {
-        return image;
+    public MultipartFile getImageFile() {
+        return imageFile;
     }
 
-    public void setImage(byte[] image) {
-        this.image = image;
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
     }
 
     public BigDecimal getPrice() {
@@ -81,22 +65,6 @@ public class Pizza {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public LocalDateTime getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(LocalDateTime created_at) {
-        this.created_at = created_at;
-    }
-
-    public List<Discount> getDiscounts() {
-        return discounts;
-    }
-
-    public void setDiscounts(List<Discount> discounts) {
-        this.discounts = discounts;
     }
 
     public List<Ingredient> getIngredients() {

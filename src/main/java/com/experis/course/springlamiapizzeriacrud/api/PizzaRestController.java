@@ -33,7 +33,9 @@ public class PizzaRestController {
 
     @GetMapping("/{id}")
     public Pizza details(@PathVariable Integer id) {
-        return pizzaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return pizzaRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
@@ -54,20 +56,25 @@ public class PizzaRestController {
     ) {
         pizza.setId(id);
 
-        Pizza editPizza = pizzaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Pizza editPizza = pizzaRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         editPizza.setName(pizza.getName());
-        editPizza.setImage_url(pizza.getImage_url());
+        editPizza.setImage(pizza.getImage());
+        editPizza.setPrice(pizza.getPrice());
         editPizza.setDescription(pizza.getDescription());
         editPizza.setIngredients(pizza.getIngredients());
-        editPizza.setPrice(pizza.getPrice());
+
 
         return pizzaRepository.save(editPizza);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
-        pizzaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        pizzaRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         pizzaRepository.deleteById(id);
     }
